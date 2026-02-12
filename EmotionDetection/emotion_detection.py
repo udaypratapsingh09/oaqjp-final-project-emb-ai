@@ -6,12 +6,20 @@ def emotion_detector(text_to_analyse):
     data = { "raw_document": { "text": text_to_analyse } }
 
     response = requests.post(url, json=data, headers=headers)
-    response = response.json()
+    if response.status_code == 400:
+        return {
+            "anger": None,
+            "disgust": None,
+            "fear": None,
+            "joy": None,
+            "sadness": None,
+            "dominant_emotion": None
+        }
 
+    response = response.json()
     emotions = response["emotionPredictions"][0]["emotion"]
     dominant_emotion = None
     max_score = 0
-
     for emotion, score in emotions.items():
         if score > max_score:
             max_score = score
